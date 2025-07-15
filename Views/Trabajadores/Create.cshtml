@@ -1,0 +1,128 @@
+﻿@model MyperPrueba.Models.Trabajador
+
+@{
+    ViewData["Title"] = "Crear Trabajador";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">
+            <i class="fas fa-user-plus"></i> Crear Trabajador
+        </h2>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a la Lista
+        </a>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle"></i> @ViewBag.Error
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <!-- El campo Id no se incluye aquí porque es auto-generado por la base de datos -->
+                <div class="form-group">
+                    <select asp-for="TipoDocumento" class="form-control">
+                        <option value="">-- Seleccione --</option>
+                        <option value="DNI">DNI</option>
+                        <option value="RUC">RUC</option>
+                        <option value="PAS">PASAPORTE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NumeroDocumento" class="control-label"></label>
+                    <input asp-for="NumeroDocumento" class="form-control" />
+                    <span asp-validation-for="NumeroDocumento" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Nombres" class="control-label"></label>
+                    <input asp-for="Nombres" class="form-control" />
+                    <span asp-validation-for="Nombres" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Sexo" class="control-label"></label>
+                    <select asp-for="Sexo" class="form-control">
+                        <option value="">-- Seleccione --</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                    </select>
+                    <span asp-validation-for="Sexo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdDepartamento" class="control-label"></label>
+                    <select asp-for="IdDepartamento" class="form-control" asp-items="ViewBag.IdDepartamento" id="IdDepartamento">
+                        <option value="">-- Seleccione Departamento --</option>
+                    </select>
+                    <span asp-validation-for="IdDepartamento" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdProvincia" class="control-label"></label>
+                    <select asp-for="IdProvincia" class="form-control" asp-items="ViewBag.IdProvincia" id="IdProvincia">
+                        <option value="">-- Seleccione Provincia --</option>
+                    </select>
+                    <span asp-validation-for="IdProvincia" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdDistrito" class="control-label"></label>
+                    <select asp-for="IdDistrito" class="form-control" asp-items="ViewBag.IdDistrito" id="IdDistrito">
+                        <option value="">-- Seleccione Distrito --</option>
+                    </select>
+                    <span asp-validation-for="IdDistrito" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Crear" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Volver a la Lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_ComboScripts"); // Include the combo box script
+    }
+    <script src="~/js/site.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#IdDepartamento').change(function () {
+                var idDepartamento = $(this).val();
+                $('#IdProvincia').empty();
+                $('#IdDistrito').empty();
+                $('#IdProvincia').append('<option value="">-- Seleccione Provincia --</option>');
+                $('#IdDistrito').append('<option value="">-- Seleccione Distrito --</option>');
+
+                if (idDepartamento) {
+                    $.getJSON('/Trabajadores/GetProvincias', { idDepartamento: idDepartamento }, function (data) {
+                        $.each(data, function (key, entry) {
+                            $('#IdProvincia').append($('<option></option>').attr('value', entry.value).text(entry.text));
+                        });
+                    });
+                }
+            });
+
+            $('#IdProvincia').change(function () {
+                var idProvincia = $(this).val();
+                $('#IdDistrito').empty();
+                $('#IdDistrito').append('<option value="">-- Seleccione Distrito --</option>');
+
+                if (idProvincia) {
+                    $.getJSON('/Trabajadores/GetDistritos', { idProvincia: idProvincia }, function (data) {
+                        $.each(data, function (key, entry) {
+                            $('#IdDistrito').append($('<option></option>').attr('value', entry.value).text(entry.text));
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

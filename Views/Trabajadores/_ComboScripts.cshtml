@@ -1,0 +1,78 @@
+﻿<script>
+    $(document).ready(function () {
+        // Cargar provincias al seleccionar un departamento
+        $('#IdDepartamento').change(function () {
+            var departamentoId = $(this).val();
+            if (departamentoId) {
+                $.getJSON('/Trabajadores/GetProvinciasByDepartamento', { departamentoId: departamentoId }, function (data) {
+                    $('#IdProvincia').empty();
+                    $('#IdProvincia').append('<option value="">-- Seleccione Provincia --</option>');
+                    $.each(data, function (key, entry) {
+                        $('#IdProvincia').append($('<option></option>').attr('value', entry.id).text(entry.nombreProvincia));
+                    });
+                    $('#IdDistrito').empty(); // Limpiar distritos al cambiar provincia
+                    $('#IdDistrito').append('<option value="">-- Seleccione Distrito --</option>');
+                });
+            } else {
+                $('#IdProvincia').empty();
+                $('#IdProvincia').append('<option value="">-- Seleccione Provincia --</option>');
+                $('#IdDistrito').empty();
+                $('#IdDistrito').append('<option value="">-- Seleccione Distrito --</option>');
+            }
+        });
+
+        // Cargar distritos al seleccionar una provincia
+        $('#IdProvincia').change(function () {
+            var provinciaId = $(this).val();
+            if (provinciaId) {
+                $.getJSON('/Trabajadores/GetDistritosByProvincia', { provinciaId: provinciaId }, function (data) {
+                    $('#IdDistrito').empty();
+                    $('#IdDistrito').append('<option value="">-- Seleccione Distrito --</option>');
+                    $.each(data, function (key, entry) {
+                        $('#IdDistrito').append($('<option></option>').attr('value', entry.id).text(entry.nombreDistrito));
+                    });
+                });
+            } else {
+                $('#IdDistrito').empty();
+                $('#IdDistrito').append('<option value="">-- Seleccione Distrito --</option>');
+            }
+        });
+
+        // Para el caso de edición, precargar combos si ya hay valores seleccionados
+        var initialDepartamentoId = $('#IdDepartamento').val();
+        var initialProvinciaId = $('#IdProvincia').val();
+        var initialDistritoId = $('#IdDistrito').val();
+
+        if (initialDepartamentoId) {
+            $.getJSON('/Trabajadores/GetProvinciasByDepartamento', { departamentoId: initialDepartamentoId }, function (data) {
+                $('#IdProvincia').empty();
+                $('#IdProvincia').append('<option value="">-- Seleccione Provincia --</option>');
+                $.each(data, function (key, entry) {
+                    $('#IdProvincia').append($('<option></option>').attr('value', entry.id).text(entry.nombreProvincia));
+                });
+                // Seleccionar la provincia inicial si existe
+                if (initialProvinciaId) {
+                    $('#IdProvincia').val(initialProvinciaId);
+                }
+                // Cargar distritos si ya hay una provincia seleccionada
+                if (initialProvinciaId) {
+                    $.getJSON('/Trabajadores/GetDistritosByProvincia', { provinciaId: initialProvinciaId }, function (data) {
+                        $('#IdDistrito').empty();
+                        $('#IdDistrito').append('<option value="">-- Seleccione Distrito --</option>');
+                        $.each(data, function (key, entry) {
+                            $('#IdDistrito').append($('<option></option>').attr('value', entry.id).text(entry.nombreDistrito));
+                        });
+                        // Seleccionar el distrito inicial si existe
+                        if (initialDistritoId) {
+                            $('#IdDistrito').val(initialDistritoId);
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+@* Este archivo puede contener scripts adicionales para la lógica de combos si es necesario.
+   Actualmente, la lógica de carga dinámica está directamente en Create.cshtml y Edit.cshtml.
+   Si se necesita una lógica más compleja o reutilizable, se podría mover aquí. *@

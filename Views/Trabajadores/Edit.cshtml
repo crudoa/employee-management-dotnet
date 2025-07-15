@@ -1,0 +1,155 @@
+﻿@model MyperPrueba.Models.Trabajador
+
+@{
+    ViewData["Title"] = "Editar Trabajador";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">
+            <i class="fas fa-edit"></i> Editar Trabajador
+        </h2>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a la Lista
+        </a>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle"></i> @ViewBag.Error
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <select asp-for="TipoDocumento" class="form-control">
+                    <option value="">-- Seleccione --</option>
+                    <option value="DNI">DNI</option>
+                    <option value="RUC">RUC</option>
+                    <option value="PAS">PASAPORTE</option>
+                </select>
+                <div class="form-group">
+                    <label asp-for="NumeroDocumento" class="control-label"></label>
+                    <input asp-for="NumeroDocumento" class="form-control" />
+                    <span asp-validation-for="NumeroDocumento" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Nombres" class="control-label"></label>
+                    <input asp-for="Nombres" class="form-control" />
+                    <span asp-validation-for="Nombres" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Sexo" class="control-label"></label>
+                    <select asp-for="Sexo" class="form-control">
+                        <option value="">-- Seleccione --</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                    </select>
+                    <span asp-validation-for="Sexo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdDepartamento" class="control-label"></label>
+                    <select asp-for="IdDepartamento" class="form-control" asp-items="ViewBag.IdDepartamento" id="IdDepartamento">
+                        <option value="">-- Seleccione Departamento --</option>
+                    </select>
+                    <span asp-validation-for="IdDepartamento" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdProvincia" class="control-label"></label>
+                    <select asp-for="IdProvincia" class="form-control" asp-items="ViewBag.IdProvincia" id="IdProvincia">
+                        <option value="">-- Seleccione Provincia --</option>
+                    </select>
+                    <span asp-validation-for="IdProvincia" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdDistrito" class="control-label"></label>
+                    <select asp-for="IdDistrito" class="form-control" asp-items="ViewBag.IdDistrito" id="IdDistrito">
+                        <option value="">-- Seleccione Distrito --</option>
+                    </select>
+                    <span asp-validation-for="IdDistrito" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Volver a la lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_ComboScripts"); // Include the combo box script
+    }
+    <script src="~/js/site.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Initial load for provinces and districts if department/province is already selected
+            var initialDepartamentoId = $('#IdDepartamento').val();
+            var initialProvinciaId = $('#IdProvincia').val();
+
+            if (initialDepartamentoId) {
+                loadProvincias(initialDepartamentoId, initialProvinciaId);
+            }
+            if (initialProvinciaId) {
+                loadDistritos(initialProvinciaId, $('#IdDistrito').val());
+            }
+
+            $('#IdDepartamento').change(function () {
+                var idDepartamento = $(this).val();
+                $('#IdProvincia').empty();
+                $('#IdDistrito').empty();
+                $('#IdProvincia').append('<option value="">-- Seleccione Provincia --</option>');
+                $('#IdDistrito').append('<option value="">-- Seleccione Distrito --</option>');
+
+                if (idDepartamento) {
+                    loadProvincias(idDepartamento);
+                }
+            });
+
+            $('#IdProvincia').change(function () {
+                var idProvincia = $(this).val();
+                $('#IdDistrito').empty();
+                $('#IdDistrito').append('<option value="">-- Seleccione Distrito --</option>');
+
+                if (idProvincia) {
+                    loadDistritos(idProvincia);
+                }
+            });
+
+            function loadProvincias(idDepartamento, selectedProvinciaId = null) {
+                $.getJSON('/Trabajadores/GetProvincias', { idDepartamento: idDepartamento }, function (data) {
+                    $.each(data, function (key, entry) {
+                        var option = $('<option></option>').attr('value', entry.value).text(entry.text);
+                        if (selectedProvinciaId && entry.value == selectedProvinciaId) {
+                            option.attr('selected', 'selected');
+                        }
+                        $('#IdProvincia').append(option);
+                    });
+                });
+            }
+
+            function loadDistritos(idProvincia, selectedDistritoId = null) {
+                $.getJSON('/Trabajadores/GetDistritos', { idProvincia: idProvincia }, function (data) {
+                    $.each(data, function (key, entry) {
+                        var option = $('<option></option>').attr('value', entry.value).text(entry.text);
+                        if (selectedDistritoId && entry.value == selectedDistritoId) {
+                            option.attr('selected', 'selected');
+                        }
+                        $('#IdDistrito').append(option);
+                    });
+                });
+            }
+        });
+    </script>
+}

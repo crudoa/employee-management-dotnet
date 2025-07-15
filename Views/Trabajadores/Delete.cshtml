@@ -1,0 +1,76 @@
+﻿@model MyperPrueba.Models.Trabajador
+
+@{
+    ViewData["Title"] = "Eliminar Trabajador";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">
+            <i class="fas fa-trash-alt"></i> Eliminar Trabajador
+        </h2>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a la Lista
+        </a>
+    </div>
+
+    <h3 class="text-danger">¿Está seguro de que desea eliminar este trabajador?</h3>
+    <div>
+        <h4>Trabajador</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.TipoDocumento)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.TipoDocumento)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.NumeroDocumento)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NumeroDocumento)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Nombres)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Nombres)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Sexo)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Sexo)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Departamento)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Departamento.NombreDepartamento)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Provincia)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Provincia.NombreProvincia)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Distrito)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Distrito.NombreDistrito)
+            </dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i> Eliminar
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Cancelar
+            </a>
+        </form>
+    </div>
+</div>
