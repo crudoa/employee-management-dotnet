@@ -5,7 +5,7 @@ using MyperPrueba.Data;
 using MyperPrueba.Models;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic; // Required for Enumerable.Empty
+using System.Collections.Generic; 
 
 namespace MyperPrueba.Controllers
 {
@@ -28,11 +28,11 @@ namespace MyperPrueba.Controllers
 
             if (!string.IsNullOrEmpty(sexFilter))
             {
-                // Asegurarse de que el filtro de sexo coincida con los valores 'M' o 'F' de la DB
+                
                 trabajadoresQuery = trabajadoresQuery.Where(t => t.Sexo == sexFilter);
             }
 
-            ViewBag.SexFilter = sexFilter; // Para mantener el filtro seleccionado en la vista
+            ViewBag.SexFilter = sexFilter; 
             return View(await trabajadoresQuery.ToListAsync());
         }
 
@@ -71,8 +71,7 @@ namespace MyperPrueba.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TipoDocumento,NumeroDocumento,Nombres,Sexo,IdDepartamento,IdProvincia,IdDistrito")] Trabajador trabajador)
         {
-            // El campo Id se ha eliminado del Bind porque es auto-generado por la DB.
-            // EF Core lo manejará automáticamente.
+            
 
             if (ModelState.IsValid)
             {
@@ -100,7 +99,7 @@ namespace MyperPrueba.Controllers
             {
                 return NotFound();
             }
-            // Recargar SelectLists para la vista de edición
+            
             ViewData["IdDepartamento"] = new SelectList(_context.Departamentos, "Id", "NombreDepartamento", trabajador.IdDepartamento);
             ViewData["IdProvincia"] = new SelectList(_context.Provincias.Where(p => p.IdDepartamento == trabajador.IdDepartamento), "Id", "NombreProvincia", trabajador.IdProvincia);
             ViewData["IdDistrito"] = new SelectList(_context.Distritos.Where(d => d.IdProvincia == trabajador.IdProvincia), "Id", "NombreDistrito", trabajador.IdDistrito);
