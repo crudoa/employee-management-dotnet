@@ -1,8 +1,6 @@
 # 👨‍💼 Employee Management System - ASP.NET Core MVC
 
-Web application built with ASP.NET Core MVC for managing employees and organizational location data (Department, Province, District).
-
-This project demonstrates CRUD operations, relational data handling, MVC architecture, and Entity Framework Core integration.
+Employee management web app built with ASP.NET Core 8 MVC, Entity Framework Core and SQL Server. Full employee CRUD with a relational Department / Province / District structure and server-side validation.
 
 ---
 
